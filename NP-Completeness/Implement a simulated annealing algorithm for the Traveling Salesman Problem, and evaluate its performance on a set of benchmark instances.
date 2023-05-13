@@ -1,0 +1,55 @@
+import random
+import math
+import time
+
+class TSP:
+    def __init__(self, n, distances):
+        self.n = n
+        self.distances = distances
+        self.cur_solution = self.get_random_solution()
+        self.cur_cost = self.get_cost(self.cur_solution)
+        self.best_solution = self.cur_solution[:]
+        self.best_cost = self.cur_cost
+        self.temperature = 100.0
+        self.cooling_rate = 0.95
+        self.iterations_per_temperature = 100
+
+    def get_random_solution(self):
+        cities = list(range(self.n))
+        random.shuffle(cities)
+        return cities
+
+    def get_cost(self, solution):
+        cost = 0
+        for i in range(self.n):
+            j = (i + 1) % self.n
+            cost += self.distances[solution[i]][solution[j]]
+        return cost
+
+    def accept(self, candidate_cost):
+        if candidate_cost < self.cur_cost:
+            self.cur_cost = candidate_cost
+            self.cur_solution = self.new_solution[:]
+            if candidate_cost < self.best_cost:
+                self.best_cost = candidate_cost
+                self.best_solution = self.new_solution[:]
+        else:
+            delta = candidate_cost - self.cur_cost
+            acceptance_probability = math.exp(-delta / self.temperature)
+            if random.random() < acceptance_probability:
+                self.cur_cost = candidate_cost
+                self.cur_solution = self.new_solution[:]
+
+    def anneal(self):
+        while self.temperature > 1.0:
+            for i in range(self.iterations_per_temperature):
+                self.new_solution = self.cur_solution[:]
+                p1 = random.randint(0, self.n - 1)
+                p2 = random.randint(0, self.n - 1)
+                self.new_solution[p1], self.new_solution[p2] = self.new_solution[p2], self.new_solution[p1]
+                candidate_cost = self.get_cost(self.new_solution)
+                self.accept(candidate_cost)
+            self.temperature *= self.cooling_rate
+
+if __name__ == '__main__':
+    distances = [
