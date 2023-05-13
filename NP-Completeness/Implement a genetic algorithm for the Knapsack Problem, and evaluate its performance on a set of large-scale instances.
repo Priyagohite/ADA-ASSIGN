@@ -1,0 +1,41 @@
+import random
+
+class Item:
+    def __init__(self, weight, value):
+        self.weight = weight
+        self.value = value
+
+class Knapsack:
+    def __init__(self, capacity, items):
+        self.capacity = capacity
+        self.items = items
+
+    def fitness(self, chromosome):
+        weight = sum(item.weight for item, bit in zip(self.items, chromosome) if bit)
+        value = sum(item.value for item, bit in zip(self.items, chromosome) if bit)
+        return value if weight <= self.capacity else 0
+
+def generate_chromosome(length):
+    return [random.randint(0, 1) for _ in range(length)]
+
+def crossover(chromosome1, chromosome2):
+    crossover_point = random.randint(0, len(chromosome1) - 1)
+    return chromosome1[:crossover_point] + chromosome2[crossover_point:], chromosome2[:crossover_point] + chromosome1[crossover_point:]
+
+def mutate(chromosome, mutation_rate):
+    return [bit ^ 1 if random.random() < mutation_rate else bit for bit in chromosome]
+
+def select_parents(population, k=2):
+    return random.choices(population, k=k, weights=[chromosome.fitness for chromosome in population])
+
+def genetic_algorithm(knapsack, population_size=100, generations=1000, mutation_rate=0.01):
+    population = [generate_chromosome(len(knapsack.items)) for _ in range(population_size)]
+    for generation in range(generations):
+        population = sorted(population, key=lambda chromosome: chromosome.fitness(knapsack), reverse=True)
+        parents = [select_parents(population) for _ in range(population_size)]
+        offspring = [crossover(parents[i][0], parents[i][1]) for i in range(population_size)]
+        population = [mutate(chromosome, mutation_rate) for chromosome in offspring]
+    return max(population, key=lambda chromosome: chromosome.fitness(knapsack))
+    
+    To evaluate the performance of the genetic algorithm, we can test it on a set of large-scale instances of the Knapsack Problem and compare its results with other algorithms or heuristics. 
+    We can also analyze the running time and scalability of the algorithm as the problem size increases.
