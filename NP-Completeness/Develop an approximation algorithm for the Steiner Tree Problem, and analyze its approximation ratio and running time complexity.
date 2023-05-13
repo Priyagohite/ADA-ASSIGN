@@ -1,0 +1,17 @@
+The Steiner Tree Problem is a classic NP-hard optimization problem that seeks to find the minimum-cost tree that spans a given set of terminal nodes, 
+which are typically a subset of the vertices in a larger graph. 
+The edges of the tree may include non-terminal vertices, called Steiner nodes, which are introduced to facilitate the connectivity between the terminal nodes.
+
+There are various approximation algorithms for the Steiner Tree Problem that trade-off between the solution quality and the computational efficiency.
+One such algorithm is the so-called MST-approximation algorithm, which relies on the observation that any Steiner tree must include the minimum spanning tree (MST) of the subgraph induced by the terminal nodes.
+
+The MST-approximation algorithm works as follows:
+
+Compute the MST of the subgraph induced by the terminal nodes.
+For each non-terminal vertex, find the closest terminal node that it can reach via the edges of the MST. 
+This can be done efficiently using Dijkstra's algorithm or a similar shortest-path algorithm.
+Connect the terminal nodes and the Steiner nodes that have been identified in Step 2 to form the final Steiner tree.
+The running time complexity of the MST-approximation algorithm is dominated by the cost of computing the MST, which can be done in O(m log n) time using Kruskal's or Prim's algorithm, 
+where n is the number of vertices and m is the number of edges in the input graph. 
+The cost of identifying the closest terminal nodes for each non-terminal vertex is O(n^2 log n) using Dijkstra's algorithm, or O(nm log n) using a more sophisticated algorithm such as the Thorup-Zwick algorithm.
+The overall running time of the algorithm is thus O(m log n + nm log n) = O(nm log n).
