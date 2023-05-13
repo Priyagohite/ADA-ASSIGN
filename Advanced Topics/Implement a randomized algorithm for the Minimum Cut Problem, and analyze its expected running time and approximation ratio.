@@ -1,0 +1,39 @@
+import random
+ 
+# Generates a random permutation of the given array
+ 
+ 
+def random_permutation(array):
+    # Shuffle the array using the random number generator
+    random.shuffle(array)
+ 
+ 
+array = [1, 2, 3, 4, 5]
+ 
+# Generate a random permutation of the array
+random_permutation(array)
+ 
+# Print the shuffled array
+print(array)
+
+One randomized algorithm for the Minimum Cut Problem is the Karger-Stein algorithm, which has an expected running time of O(n^2 log n), 
+where n is the number of vertices in the graph.
+
+The Karger-Stein algorithm works by iteratively contracting randomly chosen edges in the graph until only two nodes remain. 
+The resulting cut corresponds to the edges that were contracted in the final step. To improve the accuracy of the algorithm, 
+the contraction process is repeated multiple times and the minimum cut over all iterations is returned.
+
+To implement the Karger-Stein algorithm, we can start with an undirected graph represented as an adjacency matrix or adjacency list.
+Then, we perform the following steps:
+
+Repeat the contraction process log n times.
+Randomly select an edge to contract from the graph.
+Contract the selected edge by merging the nodes at its endpoints into a single node.
+Remove any self-loops created by the contraction.
+Repeat steps 2-4 until only two nodes remain.
+At the end of the log n iterations, the algorithm returns the minimum cut found over all iterations.
+
+The expected running time of the Karger-Stein algorithm is O(n^2 log n), which is relatively efficient compared to other algorithms 
+for the Minimum Cut Problem. The algorithm has an approximation ratio of at least 1/2, which means that the minimum cut found by the 
+algorithm is at most twice the size of the actual minimum cut.
+
