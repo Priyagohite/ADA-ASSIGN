@@ -1,0 +1,18 @@
+import itertools
+
+def tsp_brute_force(cities):
+    shortest_distance = float('inf')
+    shortest_route = None
+    
+    for route in itertools.permutations(cities):
+        distance = calculate_total_distance(route)
+        if distance < shortest_distance:
+            shortest_distance = distance
+            shortest_route = route
+    
+    return shortest_distance, shortest_route
+    
+    The time complexity of this algorithm is O(n!), where n is the number of cities.
+    This is because there are n! possible permutations of the cities, and the algorithm needs to calculate the total distance traveled for each permutation.
+    As n increases, the number of permutations grows very quickly, making the algorithm impractical for large values of n. For example, if n = 20, there are over 2 trillion possible permutations, 
+    which would take an enormous amount of time to compute even on a fast computer.
