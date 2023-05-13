@@ -1,0 +1,56 @@
+class Item:
+    def __init__(self, profit, weight):
+        self.profit = profit
+        self.weight = weight
+ 
+# Main greedy function to solve problem
+def fractionalKnapsack(W, arr):
+ 
+    # Sorting Item on basis of ratio
+    arr.sort(key=lambda x: (x.profit/x.weight), reverse=True)   
+ 
+    # Result(value in Knapsack)
+    finalvalue = 0.0
+ 
+    # Looping through all Items
+    for item in arr:
+ 
+        # If adding Item won't overflow,
+        # add it completely
+        if item.weight <= W:
+            W -= item.weight
+            finalvalue += item.profit
+ 
+        # If we can't add current Item,
+        # add fractional part of it
+        else:
+            finalvalue += item.profit * W / item.weight
+            break
+     
+    # Returning final value
+    return finalvalue
+ 
+ 
+# Driver Code
+if __name__ == "__main__":
+    W = 50
+    arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+ 
+    # Function call
+    max_val = fractionalKnapsack(W, arr)
+    print(max_val)
+    
+    The Knapsack Problem is a classic optimization problem in computer science. Given a set of items, each with a weight and a value, and a knapsack with a maximum weight capacity, the goal is to maximize the total value of the items that can be placed in the knapsack without exceeding its capacity.
+
+A greedy algorithm for the Knapsack Problem works by selecting the items with the highest value-to-weight ratio first, and adding them to the knapsack as long as there is room. Here's how the algorithm works in more detail:
+
+Calculate the value-to-weight ratio for each item.
+Sort the items in descending order of their value-to-weight ratio.
+Initialize an empty knapsack.
+For each item in the sorted list:
+If the item can fit in the knapsack without exceeding its weight capacity, add it to the knapsack.
+Otherwise, skip the item.
+Return the contents of the knapsack (i.e., the selected items) and their total value.
+The approximation ratio of a greedy algorithm for the Knapsack Problem is the ratio of the total value of the selected items to the optimal total value. In other words, it measures how well the algorithm approximates the optimal solution.
+
+The approximation ratio of the greedy algorithm for the Knapsack Problem is not constant, but it depends on the specific instance of the problem. However, it can be shown that the algorithm has a worst-case approximation ratio of 1/2. That is, for any instance of the Knapsack Problem, the total value of the items selected by the greedy algorithm is guaranteed to be at least half of the optimal total value. This result is known as the "half-approximation guarantee" of the greedy algorithm for the Knapsack Problem.
