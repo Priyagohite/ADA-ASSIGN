@@ -1,0 +1,49 @@
+The Subset Sum Problem is a classic problem in computer science, which asks whether there exists a subset of a given set of integers that adds up to a given target value. The problem is known to be NP-hard in the general case, meaning that it is unlikely to have a polynomial time algorithm for all instances of the problem.
+
+However, randomized algorithms can be used to solve the problem in expected polynomial time for many instances. Here, we will describe a simple randomized algorithm for the Subset Sum Problem, and analyze its expected running time using probabilistic techniques.
+
+The algorithm works as follows:
+
+Randomly select a subset S of the input set of integers.
+Compute the sum of the integers in S.
+If the sum of S equals the target value, output "yes". Otherwise, output "no".
+The algorithm repeats this process for a fixed number of iterations, and outputs "yes" if any iteration finds a subset that sums up to the target value. The key question is how many iterations are needed to find a solution with high probability.
+
+To answer this question, we can use the following probabilistic result:
+
+Lemma: Let X1, X2, ..., Xn be independent random variables that take values in [0,1], and let p be the probability that their sum is at least t. Then, for any c > 0, we have:
+
+Pr[sum(Xi) >= ct] <= exp(-c^2 p/2)
+
+Proof: Let Y = sum(Xi) be the sum of the random variables. Then, we have:
+
+E[e^cY] = E[prod(e^cXi)] = prod(E[e^cXi]) (by independence)
+<= prod(e^(c^2/2)) (since E[e^cXi] <= e^(c^2/2))
+= exp(n c^2/2)
+
+Now, using Markov's inequality, we have:
+
+Pr[Y >= ct] = Pr[e^cY >= e^c(t-c)]
+<= E[e^cY] / e^c(t-c)
+<= exp(n c^2/2 - c(t-c))
+
+To minimize the bound, we choose c = t/n, and obtain:
+
+Pr[Y >= t] <= exp(-t^2/(2np))
+
+Now, we can apply this lemma to our randomized algorithm. Let S be a subset of the input set of integers, chosen uniformly at random from all subsets of size k. Let X_i be the i-th integer in S. Then, the sum of X_i's is a random variable Y, which represents the sum of a random k-subset of the input integers.
+
+If there exists a subset of size k that adds up to the target value t, then the probability that Y is at least t is at least 1/(n choose k). Otherwise, the probability that Y is at least t is zero. Therefore, we can apply the lemma with p = 1/(n choose k), and obtain:
+
+Pr[Y >= t] <= exp(-k^2/(2n))
+
+To find a subset that sums up to t with high probability, we can repeat the above procedure for a fixed number of iterations. Let m be the number of iterations required to achieve a success probability of at least 1/2. Then, we have:
+
+(1/2) <= Pr[success in m iterations]
+<= m exp(-k^2/(2n))
+
+Solving for m, we obtain:
+
+m >= (1/2) exp(k^2/(2n))
+
+Therefore, the expected running time of the algorithm is at most O(exp(k^2/(2n))) iterations, which is polynomial in the input size for fixed k
