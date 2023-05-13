@@ -1,0 +1,83 @@
+from mpi4py import MPI
+import queue
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+# Define the graph and the starting vertex
+graph = {
+    0: [1, 2],
+    1: [0, 2, 3],
+    2: [0, 1, 4],
+    3: [1, 4, 5],
+    4: [2, 3, 6],
+    5: [3],
+    6: [4]
+}
+
+start_vertex = 0
+
+# Divide the graph into subgraphs
+subgraph_size = len(graph) // size
+subgraph_start = rank * subgraph_size
+subgraph_end = subgraph_start + subgraph_size
+if rank == size - 1:
+    subgraph_end = len(graph)
+
+# Initialize the visited array and the queue
+visited = [False] * len(graph)
+q = queue.Queue()
+if subgraph_start <= start_vertex < subgraph_end:
+    visited[start_vertex] = True
+    q.put(start_vertex)
+
+# Perform BFS
+while not q.empty():
+    # Get the next vertex from the queue
+    vertex = q.get()
+    # Process the vertex and add its neighbors to the queue
+    for neighbor in graph[vertex]:
+        if not visited[neighbor]:
+            visited[neighbor] = True
+            if subgraph_start <= neighbor < subgraph_end:
+                q.put(neighbor)
+    # Share the visited array between processes
+    comm.Barrier()
+    comm.Allgather(visited[subgraph_start:subgraph_end], visited)
+    comm.Barrier()
+
+# Print the visited array
+if rank == 0:
+    print(visited)
+In this implementation, each process is responsible for processing a portion of the graph. We use the queue module to maintain a list of vertices to be processed, and the visited array to keep track of which vertices have been visited. We use the MPI.Allgather function to share the visited array between processes and ensure that all processes have the same information. We also use MPI.Barrier to synchronize the processes.
+
+To analyze the speedup and efficiency of this algorithm on a cluster, we can measure the execution time of the algorithm for different numbers of processes, and compare it to the execution time on a single process. We can also calculate the speedup and efficiency as follows:
+
+//makefile
+
+speedup = single_process_execution_time / parallel_execution_time
+efficiency = speedup / number_of_processes
+Here's an example script to measure the execution time and speedup:
+
+//makefile
+
+import time
+
+start_time = time.time()
+# run the parallel BFS code
+end_time = time.time()
+
+parallel_execution_time = end_time - start_time
+print(f"Parallel execution time: {parallel_execution_time} seconds")
+
+start_time = time.time()
+# run the single process BFS code
+end_time = time.time()
+
+single_process_execution_time = end_time - start_time
+print(f"Single process execution time: {single_process_execution_time} seconds")
+
+speedup = single_process_execution_time / parallel_execution_time
+efficiency = speedup / size
+print(f"Speedup: {speedup}")
