@@ -1,0 +1,55 @@
+import random
+ 
+# Generates a random permutation of the given array
+ 
+ 
+def random_permutation(array):
+    # Shuffle the array using the random number generator
+    random.shuffle(array)
+ 
+ 
+array = [1, 2, 3, 4, 5]
+ 
+# Generate a random permutation of the array
+random_permutation(array)
+ 
+# Print the shuffled array
+print(array)
+
+Analysis...
+
+Let C be the size of the minimum vertex cover of G, and let V' be the set of vertices returned by the algorithm. We want to show that the expected size of V' is O(C log n), where n is the number of vertices in G.
+
+Let X_e be a random variable that takes value 1 if edge e is covered by V', and 0 otherwise. Then, the total number of edges covered by V' is given by the sum of X_e over all edges e in E. Let Y_u be a random variable that takes value 1 if vertex u is included in V', and 0 otherwise. Then, the size of V' is given by the sum of Y_u over all vertices u in V.
+
+We will use the linearity of expectation to calculate the expected values of X_e and Y_u. For any edge e=(u,v), we have:
+
+E[X_e] = Pr[u is added to V'] + Pr[v is added to V']
+= 1/2 + 1/2
+= 1
+
+This means that each edge is covered by V' with probability 1, so the expected number of edges covered by V' is simply |E|. For any vertex u in V, we have:
+
+E[Y_u] = 1 - Pr[u is not added to V']
+= 1 - (1/2)^deg(u)
+
+where deg(u) is the degree of vertex u, i.e., the number of edges incident to u. This is because the probability that u is not added to V' is the same as the probability that all of its neighbors are not added to V'. Since each neighbor is not added to V' with probability 1/2, the probability that all of them are not added is (1/2)^deg(u).
+
+Now, we can use the fact that C is the size of the minimum vertex cover to show that:
+
+|E| <= C * n/2
+
+This is because any vertex cover of size C covers at least one endpoint of each edge, so the total number of edges covered is at least C. On the other hand, each vertex cover covers at most n/2 vertices, so the total number of edges covered is at most n/2 times the size of the vertex cover.
+
+Using this inequality, we can bound the expected size of V' as follows:
+
+E[|V'|] = E[sum Y_u]
+= sum E[Y_u]
+= sum (1 - (1/2)^deg(u))
+<= sum (1 - 1/2)^(deg(u))
+= sum 1/2^(deg(u))
+<= sum 1/2^(C-1))
+
+
+
+
