@@ -1,0 +1,55 @@
+from mpi4py import MPI
+import numpy as np
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+n = int(np.sqrt(size))
+assert n * n == size, "The number of processors must be a perfect square."
+
+# Initialize matrices A and B
+if rank == 0:
+    A = np.random.rand(n * n, n * n)
+    B = np.random.rand(n * n, n * n)
+else:
+    A = None
+    B = None
+
+# Scatter submatrices of A and B to each processor
+A_local = np.empty((n, n, n, n), dtype=np.float64)
+B_local = np.empty((n, n, n, n), dtype=np.float64)
+comm.Scatter(A, A_local, root=0)
+comm.Scatter(B, B_local, root=0)
+
+# Initialize submatrices C_local to zero
+C_local = np.zeros((n, n, n, n), dtype=np.float64)
+
+# Perform n iterations of local multiplication and shifting
+for k in range(n):
+    # Perform local multiplication of A_local and B_local
+    for i in range(n):
+        for j in range(n):
+            C_local[i, j] += np.dot(A_local[i, k], B_local[k, j])
+    # Shift submatrices of A_local and B_local
+    A_local = np.roll(A_local, -1, axis=1)
+    B_local = np.roll(B_local, -1, axis=0)
+
+# Gather submatrices of C_local to rank 0
+C = np.empty((n * n, n * n), dtype=np.float64)
+comm.Gather(C_local, C, root=0)
+
+# Verify the result
+if rank == 0:
+    C_true = np.dot(A, B)
+    assert np.allclose(C, C_true), "The result is incorrect."
+    print("The result is correct.")
+
+# Finalize MPI
+MPI.Finalize()
+To analyze the speedup and efficiency of the Cannon's algorithm, we can measure the execution time of the algorithm on different numbers of processors and compare them with the execution time of the sequential algorithm. We can also calculate the speedup and efficiency using the following formulas:
+
+Speedup = Sequential time / Parallel time
+Efficiency = Speedup / Number of processors
+
+Here is an example of measuring the execution time and calculating the speedup and efficiency on a multicore processor using the MPI implementation
