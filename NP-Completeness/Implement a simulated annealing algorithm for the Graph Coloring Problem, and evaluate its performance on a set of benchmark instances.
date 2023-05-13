@@ -1,0 +1,59 @@
+import random
+import math
+
+def simulated_annealing(graph, max_iterations, initial_temperature, cooling_rate):
+    # initialize the current state
+    current_state = initial_state(graph)
+    current_cost = objective_function(current_state)
+    
+    # initialize the best state
+    best_state = current_state
+    best_cost = current_cost
+    
+    # initialize the temperature
+    temperature = initial_temperature
+    
+    # iterate for a maximum number of iterations
+    for i in range(max_iterations):
+        # generate a new state using the neighborhood function
+        new_state = neighborhood_function(current_state)
+        new_cost = objective_function(new_state)
+        
+        # calculate the quality difference
+        delta_cost = new_cost - current_cost
+        
+        # decide whether to accept the new state
+        if delta_cost < 0 or math.exp(-delta_cost / temperature) > random.uniform(0, 1):
+            current_state = new_state
+            current_cost = new_cost
+        
+        # update the best state
+        if current_cost < best_cost:
+            best_state = current_state
+            best_cost = current_cost
+        
+        # cool the temperature
+        temperature *= cooling_rate
+    
+    return best_state, best_cost
+
+def initial_state(graph):
+    # randomly assign colors to the nodes
+    colors = []
+    for i in range(len(graph)):
+        colors.append(random.randint(1, len(graph)))
+    return colors
+
+def objective_function(colors):
+    # count the number of conflicts
+    conflicts = 0
+    for i in range(len(graph)):
+        for j in range(i+1, len(graph)):
+            if graph[i][j] == 1 and colors[i] == colors[j]:
+                conflicts += 1
+    return conflicts
+
+def neighborhood_function(colors):
+    # randomly select a node and change its color
+    new_colors = colors.copy()
+    node = random.randint(0,
